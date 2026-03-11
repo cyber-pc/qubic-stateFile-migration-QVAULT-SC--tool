@@ -1,6 +1,23 @@
 #pragma once
 
+#ifndef _MSC_VER
+#include <x86intrin.h>
+#include <cstdint>
+typedef int8_t    __int8;
+typedef int16_t   __int16;
+typedef int32_t   __int32;
+typedef int64_t   __int64;
+typedef uint8_t   __uint8;
+typedef uint16_t  __uint16;
+typedef uint32_t  __uint32;
+typedef uint64_t  __uint64;
+#else
 #include <intrin.h>
+typedef unsigned __int8  __uint8;
+typedef unsigned __int16 __uint16;
+typedef unsigned __int32 __uint32;
+typedef unsigned __int64 __uint64;
+#endif
 
 // Used for all kinds of IDs, including in QPI and contracts.
 // Existing interface and behavior should never be changed! (However, it may be extended.)
@@ -11,15 +28,15 @@ union m256i
     __int16             m256i_i16[16];
     __int32             m256i_i32[8];
     __int64             m256i_i64[4];
-    unsigned __int8     m256i_u8[32];
-    unsigned __int16    m256i_u16[16];
-    unsigned __int32    m256i_u32[8];
-    unsigned __int64    m256i_u64[4];
+    __uint8             m256i_u8[32];
+    __uint16            m256i_u16[16];
+    __uint32            m256i_u32[8];
+    __uint64            m256i_u64[4];
 
     // interface for QPI (no [] allowed)
     struct
     {
-        unsigned __int64 _0, _1, _2, _3;
+        __uint64 _0, _1, _2, _3;
     } u64;
     struct
     {
@@ -27,7 +44,7 @@ union m256i
     } i64;
     struct
     {
-        unsigned __int32 _0, _1, _2, _3, _4, _5, _6, _7;
+        __uint32 _0, _1, _2, _3, _4, _5, _6, _7;
     } u32;
     struct
     {
@@ -35,7 +52,7 @@ union m256i
     } i32;
     struct
     {
-        unsigned __int16 _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15;
+        __uint16 _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15;
     } u16;
     struct
     {
@@ -43,8 +60,8 @@ union m256i
     } i16;
     struct
     {
-        unsigned __int8 _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15;
-        unsigned __int8 _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, _31;
+        __uint8 _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15;
+        __uint8 _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, _31;
     } u8;
     struct
     {
@@ -150,10 +167,10 @@ union m256i
 
     void setRandomValue()
     {
-        _rdrand64_step(&m256i_u64[0]);
-        _rdrand64_step(&m256i_u64[1]);
-        _rdrand64_step(&m256i_u64[2]);
-        _rdrand64_step(&m256i_u64[3]);
+        _rdrand64_step((unsigned long long*)&m256i_u64[0]);
+        _rdrand64_step((unsigned long long*)&m256i_u64[1]);
+        _rdrand64_step((unsigned long long*)&m256i_u64[2]);
+        _rdrand64_step((unsigned long long*)&m256i_u64[3]);
     }
 
     static m256i randomValue()

@@ -52,6 +52,13 @@ constexpr uint64_t QVAULT_MAX_USER_VOTES = 16;
 // Define bit type (typically 1 byte in C++)
 typedef bool bit;
 
+// Stubs for Qubic core platform APIs not available in standalone builds
+constexpr int64_t NULL_INDEX = -1;
+#define ASSERT(x) ((void)0)
+namespace QPI { typedef uint64_t uint64_t; }
+static char __scratchpad_buffer[256 * 1024 * 1024];
+static void* __scratchpad() { return __scratchpad_buffer; }
+
 template <typename T, uint64_t L>
 struct Array
 {
@@ -295,6 +302,7 @@ uint64_t HashFunction<KeyT>::hash(const KeyT& key)
     return ret;
 }
 
+template<>
 inline uint64_t HashFunction<m256i>::hash(const m256i& key)
 	{
 		return key.u64._0;
@@ -753,7 +761,7 @@ void HashSet<KeyT, L, HashFunc>::cleanup()
                 int64_t newIndex = HashFunc::hash(_keys[oldIndex]) & (L - 1);
                 for (int64_t counter = 0; counter < L; counter += 32)
                 {
-                    QPI::uint64_t newFlags = _getEncodedOccupationFlags(_occupationFlagsBuffer, newIndex);
+                    uint64_t newFlags = _getEncodedOccupationFlags(_occupationFlagsBuffer, newIndex);
                     for (int64_t i = 0; i < _nEncodedFlags; i++, newFlags >>= 2)
                     {
                         if ((newFlags & 3ULL) == 0)
